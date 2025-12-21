@@ -1,0 +1,1 @@
+# ANN-ile-renci-S-nav-Performans-Tahmini
