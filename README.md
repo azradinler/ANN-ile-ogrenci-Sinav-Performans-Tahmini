@@ -1,1 +1,1 @@
-# ANN-ile-renci-S-nav-Performans-Tahmini
+# ANN ile ogrenci Sinav Performans Tahmini
