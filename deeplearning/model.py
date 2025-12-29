@@ -139,3 +139,64 @@ print(f"R²   : {r2:.2f}")
 print("\nİlk 5 Gerçek vs Tahmin:")
 for i in range(15):
     print(f"Gerçek: {y_true[i][0]:.2f} | Tahmin: {y_pred[i][0]:.2f}")
+
+import gradio as gr
+
+# -------------------------------
+# 13. Tahmin Fonksiyonu
+# -------------------------------
+def predict_performance(
+    hours_studied,
+    previous_scores,
+    extracurricular,
+    sleep_hours,
+    sample_papers
+):
+    input_data = np.array([[
+        hours_studied,
+        previous_scores,
+        extracurricular,
+        sleep_hours,
+        sample_papers
+    ]])
+
+    # Scale
+    input_scaled = scaler.transform(input_data)
+
+    # Tensor
+    input_tensor = torch.tensor(input_scaled, dtype=torch.float32)
+
+    # Tahmin
+    model.eval()
+    with torch.no_grad():
+        prediction = model(input_tensor).item()
+
+    # 🔒 SINIRLAMA (0 - 100)
+    prediction = max(0, min(100, prediction))
+
+    # 🔢 İstersen yuvarla
+    prediction = round(prediction, 2)
+
+    return prediction
+
+# -------------------------------
+# 14. Gradio UI
+# -------------------------------
+interface = gr.Interface(
+    fn=predict_performance,
+    inputs=[
+        gr.Number(label="Hours Studied"),
+        gr.Number(label="Previous Scores"),
+        gr.Radio([0, 1], label="Extracurricular Activities (0=No, 1=Yes)"),
+        gr.Number(label="Sleep Hours"),
+        gr.Number(label="Sample Question Papers Practiced")
+    ],
+    outputs=gr.Number(label="Predicted Performance Index"),
+    title="🎓 Student Performance Prediction (ANN)",
+    description="Bu uygulama PyTorch ile eğitilmiş Yapay Sinir Ağı kullanarak öğrenci performansını tahmin eder."
+)
+
+# -------------------------------
+# 15. Uygulamayı Başlat
+# -------------------------------
+interface.launch()
